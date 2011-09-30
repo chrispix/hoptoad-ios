@@ -9,27 +9,23 @@
 #import "HTSAppDelegate_iOS.h"
 
 // api key
-static NSString * HTSHoptoadAPIKey = @"";
+static NSString *HTSHoptoadAPIKey = @"";
 
 @implementation HTSAppDelegate_iOS
 
-@synthesize window=_window;
+@synthesize window = __window;
 
 #pragma mark - application delegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     // setup notifier
-#ifdef DEBUG
-	[HTNotifier startNotifierWithAPIKey:HTSHoptoadAPIKey
-						environmentName:HTNotifierDevelopmentEnvironment];
-#else
-    [HTNotifier startNotifierWithAPIKey:HTSHoptoadAPIKey
-						environmentName:HTNotifierAppStoreEnvironment];
-#endif
-	[[HTNotifier sharedNotifier] setDelegate:self];
-    [[HTNotifier sharedNotifier] setUseSSL:YES]; // only if your account supports it
-    [[HTNotifier sharedNotifier] setEnvironmentValue:@"test value" forKey:@"test key"];
-	[[HTNotifier sharedNotifier] writeTestNotice];
+    HTNotifier *notifier = [HTNotifier
+                            startNotifierWithAPIKey:HTSHoptoadAPIKey
+                            environmentName:HTNotifierAutomaticEnvironment];
+	[notifier setDelegate:self];
+    [notifier setUseSSL:YES]; // only if your account supports it
+    [notifier setEnvironmentValue:@"test value" forKey:@"test key"];
+	[notifier writeTestNotice];
     
     // show ui
     [self.window makeKeyAndVisible];
@@ -59,8 +55,8 @@ static NSString * HTSHoptoadAPIKey = @"";
 	NSLog(@"%s", __PRETTY_FUNCTION__);
 	return nil;
 }
-- (void)notifierDidHandleException:(NSException *)exc {
-	NSLog(@"%s %@", __PRETTY_FUNCTION__, exc);
+- (void)notifierDidLogException:(NSException *)exception {
+    NSLog(@"%s %@", __PRETTY_FUNCTION__, exception);
 }
 - (void)notifierWillDisplayAlert {
 	NSLog(@"%s", __PRETTY_FUNCTION__);
